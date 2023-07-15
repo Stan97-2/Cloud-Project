@@ -120,4 +120,178 @@ Several EC2 instances launch in a virtual private cloud (VPC) that has internet 
 
 # IAM
 
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowEC2AndS3",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:RunInstances",
+        "ec2:TerminateInstances",
+        "s3:GetObject",
+        "s3:PutObject"
+      ],
+      "Resource": [
+        "arn:aws:ec2:us-east-1:123456789012:instance/*",
+        "arn:aws:s3:::example-bucket/*"
+      ]
+    }
+  ]
+}
+```
+
+Question: What actions are allowed for EC2 instances and S3 objects based on this policy? What specific resources are included?
+
+Answer: Users can create and terminate all EC2 instances in the region us-east-1 for the AWS account with the ID 123456789012 and have read and write access to all objects stored in the example-bucket S3 bucket.
+
+
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowVPCAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:DescribeVpcs",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups"
+      ],
+      "Resource": "*",
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestedRegion": "us-west-2"
+        }
+      }
+    }
+  ]
+}
+```
+
+Question: Under what condition does this policy allow access to VPC-related information? Which AWS region is specified?
+
+Answer: This policy allows access to VPC informations only if the requested AWS region is set to "us-west-2".
+
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowS3ReadWrite",
+      "Effect": "Allow",
+      "Action": ["s3:GetObject", "s3:PutObject", "s3:ListBucket"],
+      "Resource": [
+        "arn:aws:s3:::example-bucket",
+        "arn:aws:s3:::example-bucket/*"
+      ],
+      "Condition": {
+        "StringLike": {
+          "s3:prefix": ["documents/*", "images/*"]
+        }
+      }
+    }
+  ]
+}
+```
+
+Question: What actions are allowed on the "example-bucket" and its objects based on this policy? What specific prefixes are specified in the condition?
+
+Answer: This policy allows the user to read, write, and list objects in the "example-bucket". However, the policy restricts the actions to objects that have the prefixes "documents/" or "images/".
+
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "AllowIAMUserCreation",
+      "Effect": "Allow",
+      "Action": "iam:CreateUser",
+      "Resource": "arn:aws:iam::123456789012:user/${aws:username}"
+    },
+    {
+      "Sid": "AllowIAMUserDeletion",
+      "Effect": "Allow",
+      "Action": "iam:DeleteUser",
+      "Resource": "arn:aws:iam::123456789012:user/${aws:username}"
+    }
+  ]
+}
+```
+
+Question: What actions are allowed for IAM users based on this policy? How are the resource ARNs constructed?
+
+Answer: This policy allows IAM users to create and delete IAM users in the AWS account identified by the ID 123456789012. The ARNs are dynamically constructed based on the IAM user's name.
+
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": {
+    "Effect": "Allow",
+    "Action": ["iam:Get*", "iam:List*"],
+    "Resource": "*"
+  }
+}
+```
+
+Questions:
+
+Which AWS service does this policy grant you access to?
+
+```This policy grants access to the Identity and Access Management (IAM) service in AWS.```
+
+Does it allow you to create an IAM user, group, policy, or role?
+
+```It only allows listing and getting information about existing IAM resources rather than creating new ones.```
+
+Go to https://docs.aws.amazon.com/IAM/latest/UserGuide/ and in the left navigation expand Reference > Policy Reference > Actions, Resources, and Condition Keys. Choose Identity And Access Management. Scroll to the Actions Defined by Identity And Access Management list.  Name at least three specific actions that the iam:Get* action allows.
+```
+GetAccessKeyLastUsed: retrieve information about when the specified access key was last used
+GetAccountAuthorizationDetails: retrieve information about all IAM users, groups, roles, and policies in your AWS account, including their relationships to one another		
+GetAccountEmailAddress: retrieve the email address that is associated with the accoun
+```
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Condition": {
+        "StringEquals": {
+          "ec2:InstanceType": ["t2.micro", "t2.small"]
+        }
+      },
+      "Resource": "arn:aws:ec2:*:*:instance/*",
+      "Action": ["ec2:RunInstances", "ec2:StartInstances"],
+      "Effect": "Deny"
+    }
+  ]
+}
+```
+
+Questions:
+What actions does the policy allow?
+
+```Allows the user to launch new EC2 instances and start existing EC2 instances. But, since Effect is set to "Deny", these actions are denied for instances that do not meet the condition specified.```
+
+Say that the policy included an additional statement object, like this example:
+```json
+{
+  "Effect": "Allow",
+  "Action": "ec2:*"
+}
+```
+How would the policy restrict the access granted to you by this additional statement?
+
+```This statement grants access to all EC2 actions (ec2:*). In the case where both statements are present in the policy, the "Deny" effect of the first statement would take precedence. The user would be denied the actions ec2:RunInstances and ec2:StartInstances for instances that do not have the instance type t2.micro or t2.small```
+
+If the policy included both the statement on the left and the statement in question 2, could you terminate an m3.xlarge instance that existed in the account?
+
+```These two statements on the policy allow all actions on all EC2 instances except for running new instance or for starting instance ("t2.micro" and "t2.small"). "m3.xlarge" instance then is allowed for all actions, so we can terminate this type of instance.```
+
 # AWS Quicksight
