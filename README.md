@@ -1,5 +1,9 @@
 # Cloud-Project
 
+# Team
+
+Benjamin BERNARD - François CHARVET - Stanley DELLON
+
 # App deployment
 
 # Quiz
