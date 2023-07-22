@@ -6,6 +6,13 @@ Benjamin BERNARD - François CHARVET - Stanley DELLON
 
 # App deployment
 
+Architecture : 
+![ProjectDiagram](https://github.com/Stan97-2/Cloud-Project/assets/95236118/ab78a8e8-0a18-4871-a221-c10d78f51e28)
+
+Screenshots : 
+https://github.com/Stan97-2/Cloud-Project/tree/main/App%20deployment
+
+
 # Quiz
 ## IAM Quiz
 Which statement describes AWS Identity and Access Management (IAM) users?
