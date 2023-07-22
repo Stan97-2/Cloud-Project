@@ -306,3 +306,5 @@ If the policy included both the statement on the left and the statement in quest
 ```These two statements on the policy allow all actions on all EC2 instances except for running new instance or for starting instance ("t2.micro" and "t2.small"). "m3.xlarge" instance then is allowed for all actions, so we can terminate this type of instance.```
 
 # AWS Quicksight
+
+screenshots : https://github.com/Stan97-2/Cloud-Project/tree/main/Quicksight_visualization
